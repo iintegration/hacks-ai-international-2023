@@ -36,7 +36,9 @@ ignore = [
     "D213",
     "RUF012",
     "ANN101",
-    "A003"
+    "A003",
+    "COM812",
+    "ISC001"
 ]
 
 fix = true
