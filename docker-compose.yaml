@@ -42,7 +42,7 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: worker.Dockerfile
+      dockerfile: workers.Dockerfile
     depends_on:
       - redis
       - edgedb
