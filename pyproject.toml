@@ -16,7 +16,7 @@ pydantic-settings = "^2.1.0"
 miniopy-async = "^1.17"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.1.6"
+ruff = "^0.0.284"
 mypy = "^1.7.0"
 
 [tool.ruff]
@@ -71,8 +71,9 @@ target-version = "py311"
 [tool.ruff.mccabe]
 max-complexity = 10
 
-[tool.black]
-line-length = 79
+[tool.ruff.format]
+indent-style = "space"
+quote-style = "double"
 
 [tool.mypy]
 plugins = "pydantic.mypy"
