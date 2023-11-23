@@ -14,6 +14,14 @@ from app.settings import SETTINGS
 async def analyze(ctx: dict[str, Any], lecture_id: UUID) -> None:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
 
+    if lecture is None:
+        # TODO: some log
+        return
+
+    if lecture.object_name is None:
+        # TODO: some log if we try to analyze lection without file
+        return
+
     with tempfile.TemporaryDirectory() as tmpdirname:
         file_path = Path(tmpdirname) / str(lecture_id)
         await minio.client.fget_object(bucket_name=SETTINGS.s3_bucket, object_name=lecture.object_name,

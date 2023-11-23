@@ -98,6 +98,11 @@ warn_return_any = true
 follow_imports_for_stubs = true
 namespace_packages = true
 show_absolute_path = true
+exclude = ["app/queries.py"]
+
+[[tool.mypy.overrides]]
+module = "miniopy_async.*"
+ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core"]

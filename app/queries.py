@@ -8,10 +8,12 @@
 
 
 from __future__ import annotations
+
 import dataclasses
-import edgedb
 import enum
 import uuid
+
+import edgedb
 
 
 class NoPydanticValidation:
@@ -49,9 +51,9 @@ class SetLectureStatusResult(NoPydanticValidation):
 
 
 async def create_lecture(
-    executor: edgedb.AsyncIOExecutor,
-    *,
-    filename: str,
+        executor: edgedb.AsyncIOExecutor,
+        *,
+        filename: str,
 ) -> CreateLectureResult:
     return await executor.query_single(
         """\
@@ -68,9 +70,9 @@ async def create_lecture(
 
 
 async def get_lecture(
-    executor: edgedb.AsyncIOExecutor,
-    *,
-    id: uuid.UUID,
+        executor: edgedb.AsyncIOExecutor,
+        *,
+        id: uuid.UUID,
 ) -> GetLectureResult | None:
     return await executor.query_single(
         """\
@@ -88,7 +90,7 @@ async def get_lecture(
 
 
 async def get_lectures(
-    executor: edgedb.AsyncIOExecutor,
+        executor: edgedb.AsyncIOExecutor,
 ) -> list[GetLectureResult]:
     return await executor.query(
         """\
@@ -103,10 +105,10 @@ async def get_lectures(
 
 
 async def set_lecture_status(
-    executor: edgedb.AsyncIOExecutor,
-    *,
-    id: uuid.UUID,
-    status: str,
+        executor: edgedb.AsyncIOExecutor,
+        *,
+        id: uuid.UUID,
+        status: str,
 ) -> SetLectureStatusResult | None:
     return await executor.query_single(
         """\

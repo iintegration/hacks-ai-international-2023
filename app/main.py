@@ -19,12 +19,12 @@ app.add_middleware(
 
 
 @app.on_event("startup")
-async def startup_event():
+async def startup_event() -> None:
     await arq.init_client()
 
 
 @app.on_event("shutdown")
-async def shutdown_event():
+async def shutdown_event() -> None:
     if arq.client is not None:
         await arq.client.aclose()
     await edgedb.client.aclose()

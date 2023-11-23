@@ -1,5 +1,6 @@
 from datetime import timedelta
 from http import HTTPStatus
+from typing import cast
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
@@ -8,10 +9,12 @@ from miniopy_async import S3Error
 from app.deps import arq, edgedb, minio
 from app.models.requests.create_lecture import CreateLecture
 from app.models.responses.created_lecture import CreatedLecture
+from app.models.responses.lecture import Lecture
 from app.models.responses.lecture_status import LectureStatus
 from app.queries import (
     create_lecture,
     get_lecture,
+    get_lectures,
     set_lecture_status,
 )
 from app.settings import SETTINGS
@@ -20,8 +23,8 @@ router = APIRouter(prefix="/lectures")
 
 
 @router.get("/")
-async def lectures() -> None:
-    return
+async def lectures() -> list[Lecture]:
+    return cast(list[Lecture], await get_lectures(edgedb.client))
 
 
 @router.post("/", status_code=HTTPStatus.CREATED)
@@ -42,11 +45,11 @@ async def create(lecture: CreateLecture) -> CreatedLecture:
 async def start_analyze(lecture_id: UUID) -> None:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
 
+    if lecture is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Lecture not found")
+
     if lecture.status.value != "Created":
         raise HTTPException(status_code=HTTPStatus.CONFLICT, detail="Analyze already started")
-
-    if lecture is None:
-        raise HTTPException(status_code=404, detail="Lecture not found")
 
     try:
         await minio.client.stat_object(
@@ -62,5 +65,8 @@ async def start_analyze(lecture_id: UUID) -> None:
 @router.get("/{lecture_id}/status")
 async def get_status(lecture_id: UUID) -> LectureStatus:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
+
+    if lecture is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Lecture not found")
 
     return LectureStatus(status=lecture.status.value)
