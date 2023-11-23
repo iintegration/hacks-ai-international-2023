@@ -34,8 +34,10 @@ async def create(lecture: CreateLecture) -> CreatedLecture:
     )
 
     upload_url = await minio.client.presigned_put_object(
-        SETTINGS.s3_bucket, object_name=created_lecture.object_name, expires=timedelta(minutes=10),
-        change_host=SETTINGS.s3_public_host
+        SETTINGS.s3_bucket,
+        object_name=created_lecture.object_name,
+        expires=timedelta(minutes=10),
+        change_host=SETTINGS.s3_public_host,
     )
 
     return CreatedLecture(id=created_lecture.id, upload_url=upload_url)
@@ -46,20 +48,28 @@ async def start_analyze(lecture_id: UUID) -> None:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
 
     if lecture is None:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Lecture not found")
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Lecture not found"
+        )
 
     if lecture.status.value != "Created":
-        raise HTTPException(status_code=HTTPStatus.CONFLICT, detail="Analyze already started")
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT, detail="Analyze already started"
+        )
 
     try:
         await minio.client.stat_object(
             bucket_name=SETTINGS.s3_bucket, object_name=lecture.object_name
         )
     except S3Error as error:
-        raise HTTPException(status_code=404, detail="Lecture file not found") from error
+        raise HTTPException(
+            status_code=404, detail="Lecture file not found"
+        ) from error
 
     await set_lecture_status(edgedb.client, id=lecture_id, status="Processing")
-    await arq.client.enqueue_job("analyze", lecture_id=lecture_id, _job_id=str(lecture_id))
+    await arq.client.enqueue_job(
+        "analyze", lecture_id=lecture_id, _job_id=str(lecture_id)
+    )
 
 
 @router.get("/{lecture_id}/status")
@@ -67,6 +77,8 @@ async def get_status(lecture_id: UUID) -> LectureStatus:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
 
     if lecture is None:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Lecture not found")
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Lecture not found"
+        )
 
     return LectureStatus(status=lecture.status.value)
