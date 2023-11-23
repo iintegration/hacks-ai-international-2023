@@ -76,10 +76,6 @@ target-version = "py311"
 [tool.ruff.mccabe]
 max-complexity = 10
 
-[tool.ruff.format]
-indent-style = "space"
-quote-style = "double"
-
 [tool.mypy]
 plugins = "pydantic.mypy"
 python_version = 3.11

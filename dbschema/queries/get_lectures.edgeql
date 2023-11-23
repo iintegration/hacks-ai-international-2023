@@ -4,5 +4,3 @@ select Lecture {
     filename := .file.filename,
     object_name := <str>(.file.id)
 }
-filter .id = <uuid>$id
-limit 1

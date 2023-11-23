@@ -1,8 +1,7 @@
 import arq
-from arq.connections import RedisSettings, ArqRedis
+from arq.connections import ArqRedis, RedisSettings
 
 from app.settings import SETTINGS
-
 
 client: ArqRedis | None = None
 

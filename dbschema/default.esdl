@@ -17,11 +17,9 @@ module meta {
 module default {
     scalar type LectureStatus extending enum<Created, Processing, Processed>;
 
-    type Lecture extending meta::Times {
+    type File extending meta::Times {
         required filename: str;
-        required status: LectureStatus {
-            default := LectureStatus.Created;
-        }
+        link lecture := .<file[is Lecture];
 
         index fts::index on (
             fts::with_options(
@@ -29,5 +27,12 @@ module default {
               language := fts::Language.eng
             )
         );
+    }
+
+    type Lecture extending meta::Times {
+        required status: LectureStatus {
+            default := LectureStatus.Created;
+        }
+        link file: File;
     }
 }
