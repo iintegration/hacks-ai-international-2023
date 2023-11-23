@@ -4,4 +4,4 @@ set -e
 
 edgedb migrate --dsn="${EDGEDB_DSN}" || true
 
-python -m app
+uvicorn app.main:app --host 0.0.0.0 --port 80

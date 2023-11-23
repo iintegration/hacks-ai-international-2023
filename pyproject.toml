@@ -8,14 +8,27 @@ packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = "^0.101.1"
 edgedb = "^1.7.0"
 arq = "^0.25.0"
 pydantic = "^2.5.1"
 pydantic-settings = "^2.1.0"
 miniopy-async = "^1.17"
-uvicorn = "^0.24.0.post1"
 redis = "^5.0.1"
+
+[tool.poetry.group.background]
+optional = true
+
+[tool.poetry.group.background.dependencies]
+
+[tool.poetry.group.api]
+optional = true
+
+[tool.poetry.group.api.dependencies]
+fastapi = "^0.101.1"
+uvicorn = "^0.24.0.post1"
+
+[tool.poetry.group.dev]
+optional = true
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.284"

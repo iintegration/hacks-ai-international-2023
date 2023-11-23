@@ -3,34 +3,34 @@ services:
   redis:
     restart: always
     image: redis:alpine
+    volumes:
+      - redis-data:/data
 
   edgedb:
     restart: always
     image: edgedb/edgedb:4.1
-    ports:
-      - "5656:5656"
     volumes:
-      - bot-edgedb-data:/var/lib/edgedb/data:/var/lib/edgedb/data
-    environment:
-      EDGEDB_SERVER_SECURITY: insecure_dev_mode
-      EDGEDB_SERVER_ADMIN_UI: enabled
-      EDGEDB_SERVER_PASSWORD: password
+      - edgedb-data:/var/lib/edgedb/data:/var/lib/edgedb/data
+      - "./dbschema:/dbschema"
+    env_file:
+      - .env
 
   minio:
+    restart: always
     image: minio/minio:latest
-    command: server --console-address ":9001" /data/
+    command: server --address ":9000" /data/
     ports:
       - "9000:9000"
-      - "9001:9001"
-    environment:
-      MINIO_ROOT_USER: user
-      MINIO_ROOT_PASSWORD: password
+    env_file:
+      - .env
     volumes:
       - minio-storage:/data
 
   app:
     restart: always
-    build: .
+    build:
+      context: .
+      dockerfile: api.Dockerfile
     depends_on:
       - redis
       - edgedb
@@ -42,7 +42,7 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: workers.Dockerfile
+      dockerfile: background.Dockerfile
     depends_on:
       - redis
       - edgedb
@@ -51,5 +51,6 @@ services:
       - .env
 
 volumes:
-  bot-edgedb-data:
+  redis-data:
+  edgedb-data:
   minio-storage:

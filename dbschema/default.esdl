@@ -33,6 +33,8 @@ module default {
         required status: LectureStatus {
             default := LectureStatus.Created;
         }
-        link file: File;
+        link file: File {
+            on source delete delete target;
+        }
     }
 }

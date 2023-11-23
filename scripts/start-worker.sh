@@ -2,4 +2,4 @@
 
 set -e
 
-arq app.worker.messages.WorkerSettings
+arq app.background.BackgroundSettings

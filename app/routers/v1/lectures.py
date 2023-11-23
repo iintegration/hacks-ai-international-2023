@@ -13,6 +13,7 @@ from app.models.responses.lecture import Lecture
 from app.models.responses.lecture_status import LectureStatus
 from app.queries import (
     create_lecture,
+    delete_lectures,
     get_lecture,
     get_lectures,
     set_lecture_status,
@@ -43,7 +44,7 @@ async def create(lecture: CreateLecture) -> CreatedLecture:
     return CreatedLecture(id=created_lecture.id, upload_url=upload_url)
 
 
-@router.post("/{lecture_id}/start_analyze")
+@router.post("/{lecture_id}/start_analyze/")
 async def start_analyze(lecture_id: UUID) -> None:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
 
@@ -72,7 +73,7 @@ async def start_analyze(lecture_id: UUID) -> None:
     )
 
 
-@router.get("/{lecture_id}/status")
+@router.get("/{lecture_id}/status/")
 async def get_status(lecture_id: UUID) -> LectureStatus:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
 
@@ -82,3 +83,8 @@ async def get_status(lecture_id: UUID) -> LectureStatus:
         )
 
     return LectureStatus(status=lecture.status.value)
+
+
+@router.delete("/")
+async def delete_all() -> None:
+    await delete_lectures(edgedb.client)
