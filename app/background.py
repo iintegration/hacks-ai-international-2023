@@ -19,7 +19,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
         return
 
     if lecture.object_name is None:
-        # TODO: some log if we try to analyze lection without file
+        # TODO: some log if we try to analyze lecture without file
         return
 
     with tempfile.TemporaryDirectory() as tmpdirname:
