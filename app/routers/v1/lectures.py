@@ -9,7 +9,11 @@ from app.deps import arq, edgedb, minio
 from app.models.requests.create_lecture import CreateLecture
 from app.models.responses.created_lecture import CreatedLecture
 from app.models.responses.lecture_status import LectureStatus
-from app.queries import create_lecture, get_lecture, set_lecture_status, get_lectures, GetLectureResult
+from app.queries import (
+    create_lecture,
+    get_lecture,
+    set_lecture_status,
+)
 from app.settings import SETTINGS
 
 router = APIRouter(prefix="/lectures")
@@ -17,7 +21,6 @@ router = APIRouter(prefix="/lectures")
 
 @router.get("/")
 async def lectures() -> None:
-    # return await get_lectures(edgedb.client)
     return
 
 
