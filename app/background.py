@@ -69,8 +69,12 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
                 object_name=lecture.object_name,
                 file_path=str(file_path),
             )
+            print(file_path)
+            print(str(file_path))
             audio = librosa.load(str(file_path), sr=16_000)[0]
+            print(audio)
             result = pipe(audio, generate_kwargs={"language": "russian"})
+            print(result)
             await finish_analysis(
                 edgedb.client,
                 lecture_id=lecture_id,
