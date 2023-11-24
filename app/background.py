@@ -79,6 +79,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
         print("Starting pipe")
         result = pipe(audio, generate_kwargs={"language": "russian"})
         print(result)
+        await edgedb.client.ensure_connected()
         await finish_analysis(
             edgedb.client,
             lecture_id=lecture_id,
@@ -89,7 +90,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
     except Exception as error:
         print("Error!", repr(error), error.__class__)
         traceback.print_exc()
-        await finish_analysis(edgedb.client, lecture_id=lecture_id, status="Error", text=None, error=str(error))
+        await finish_analysis(edgedb.client, lecture_id=lecture_id, status="Error", text=None, error=repr(error))
     finally:
         Path(path).unlink(missing_ok=True)
 
