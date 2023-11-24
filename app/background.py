@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Any
 from uuid import UUID
@@ -86,7 +87,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             status="Processed",
             text=result["text"],
             error=None,
-            timestamps=result["chunks"]
+            timestamps=json.dumps(result["chunks"])
         )
     except Exception as error:
         context_logger.exception("Error")
