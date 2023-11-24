@@ -84,7 +84,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             edgedb.client,
             lecture_id=lecture_id,
             status="Processed",
-            text=result["text"]
+            text=result["text"][0:100]
         )
     except Exception as error:
         print("Error!", repr(error), error.__class__)
