@@ -23,12 +23,12 @@ router = APIRouter(prefix="/lectures")
 
 
 @router.get("/")
-async def lectures() -> list[Lecture]:
+async def all_lectures() -> list[Lecture]:
     return cast(list[Lecture], await get_lectures(edgedb.client))
 
 
 @router.post("/", status_code=HTTPStatus.CREATED)
-async def create(lecture: CreateLecture) -> CreatedLecture:
+async def create_lecture(lecture: CreateLecture) -> CreatedLecture:
     created_lecture = await create_lecture(
         edgedb.client, filename=lecture.filename
     )
@@ -71,7 +71,7 @@ async def start_analyze(lecture_id: UUID) -> None:
 
 
 @router.get("/{lecture_id}/")
-async def get_status(lecture_id: UUID) -> Lecture:
+async def get_lecture(lecture_id: UUID) -> Lecture:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
 
     if lecture is None:
