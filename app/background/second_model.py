@@ -13,7 +13,6 @@ from llama_cpp import Llama
 from app.background import first_model
 
 EMBEDDER_ID = "ai-forever/sbert_large_nlu_ru"
-PATH_TO_AUDIO = "/kaggle/input/audiofiles"
 SYSTEM_PROMPT = "Ты — Сайга, русскоязычный автоматический ассистент. Ты разговариваешь c людьми и помогаешь им."
 SYSTEM_TOKEN = 1587
 USER_TOKEN = 2188
@@ -28,7 +27,7 @@ top_k = 40
 top_p = 0.5
 temperature = 0.05
 repeat_penalty = 1.1
-model_path = "/cache/hf/model-q4_K.gguf"
+model_path = "/usr/src/app/cache/hf/model-q4_K.gguf"
 
 
 ROLE_TOKENS = {"user": USER_TOKEN, "bot": BOT_TOKEN, "system": SYSTEM_TOKEN}
