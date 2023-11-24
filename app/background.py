@@ -100,3 +100,4 @@ class BackgroundSettings:
 
     max_jobs = 1
     max_tries = 2
+    job_timeout = 1800
