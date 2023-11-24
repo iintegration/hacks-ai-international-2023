@@ -68,18 +68,21 @@ async def create_lecture(
     executor: edgedb.AsyncIOExecutor,
     *,
     filename: str,
+    filename_suffix: str,
 ) -> CreateLectureResult:
     return await executor.query_single(
         """\
         with result := (insert Lecture {
             file := (insert File {
-                filename := <str>$filename
+                filename := <str>$filename,
+                filename_suffix := <str>$filename_suffix
             })
         })
 
-        select result { id, object_name := <str>(.file.id) }\
+        select result { id, object_name := .file.object_name }\
         """,
         filename=filename,
+        filename_suffix=filename_suffix,
     )
 
 
@@ -132,7 +135,7 @@ async def get_lecture(
             id,
             status,
             filename := .file.filename,
-            object_name := <str>(.file.id),
+            object_name := .file.object_name,
             text := .text,
             error := .error,
             timestamps := .timestamps
