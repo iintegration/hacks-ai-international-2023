@@ -1,3 +1,4 @@
+import os
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -48,9 +49,11 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
 
     print(lecture)
+    print(lecture is None)
     if lecture is None:
         return
 
+    print(lecture.object_name is None)
     if lecture.object_name is None:
         await finish_analysis(
             edgedb.client,
@@ -61,36 +64,27 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
         )
         return
 
-    # try:
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            file_path = Path(tmpdirname) / lecture.filename
-            await minio.client.fget_object(
-                bucket_name=SETTINGS.s3_bucket,
-                object_name=lecture.object_name,
-                file_path=str(file_path),
-            )
-            print(file_path)
-            print(str(file_path))
-            audio = librosa.load(str(file_path), sr=16_000)[0]
-            print(audio)
-            result = pipe(audio, generate_kwargs={"language": "russian"})
-            print(result)
-            await finish_analysis(
-                edgedb.client,
-                lecture_id=lecture_id,
-                status="Processed",
-                text=result["text"],
-                error=None,
-            )
-    # except Exception as error:
-    #     print(error)
-    #     await finish_analysis(
-    #         edgedb.client,
-    #         lecture_id=lecture_id,
-    #         status="Error",
-    #         text=None,
-    #         error=str(error),
-    #     )
+    path = lecture.object_name + lecture.filename
+    print(path)
+    try:
+        await minio.client.fget_object(
+            bucket_name=SETTINGS.s3_bucket,
+            object_name=lecture.object_name,
+            file_path=path
+        )
+        audio = librosa.load(path, sr=16_000)[0]
+        result = pipe(audio, generate_kwargs={"language": "russian"})
+        await finish_analysis(
+            edgedb.client,
+            lecture_id=lecture_id,
+            status="Processed",
+            text=result["text"],
+            error=None,
+        )
+    except Exception as error:
+        await finish_analysis(edgedb.client, lecture_id=lecture_id, status="Error", text=None, error=str(error))
+    finally:
+        Path(path).unlink(missing_ok=True)
 
 
 async def shutdown(_ctx: dict[str, Any]) -> None:
