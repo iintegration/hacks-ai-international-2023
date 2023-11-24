@@ -1,5 +1,6 @@
 import os
 import tempfile
+import traceback
 from pathlib import Path
 from typing import Any
 from uuid import UUID
@@ -67,13 +68,17 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
     path = lecture.object_name + lecture.filename
     print(path)
     try:
+        print("Starting downloading")
         await minio.client.fget_object(
             bucket_name=SETTINGS.s3_bucket,
             object_name=lecture.object_name,
             file_path=path
         )
+        print("Downloaded, librosa")
         audio = librosa.load(path, sr=16_000)[0]
+        print("Starting pipe")
         result = pipe(audio, generate_kwargs={"language": "russian"})
+        print(result)
         await finish_analysis(
             edgedb.client,
             lecture_id=lecture_id,
@@ -82,6 +87,8 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             error=None,
         )
     except Exception as error:
+        print("Error!", repr(error), error.__class__)
+        traceback.print_exc()
         await finish_analysis(edgedb.client, lecture_id=lecture_id, status="Error", text=None, error=str(error))
     finally:
         Path(path).unlink(missing_ok=True)
