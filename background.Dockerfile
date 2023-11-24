@@ -20,7 +20,7 @@ RUN apt update \
 RUN pip install -U pip poetry && \
     poetry config virtualenvs.create false
 
-RUN mkdir /cache/hf && wget -q -O /cache/hf/model-q4_K.gguf https://huggingface.co/IlyaGusev/saiga_mistral_7b_gguf/resolve/main/model-q4_K.gguf
+RUN mkdir -p /cache/hf && wget -q -O /cache/hf/model-q4_K.gguf https://huggingface.co/IlyaGusev/saiga_mistral_7b_gguf/resolve/main/model-q4_K.gguf
 
 COPY pyproject.toml poetry.lock /usr/src/app/
 RUN poetry install -n --with=background \
