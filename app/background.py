@@ -67,7 +67,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
         )
         return
 
-    path = lecture.object_name + lecture.filename
+    path = lecture.object_name
     try:
         context_logger.info("Downloading file")
         await minio.client.fget_object(
