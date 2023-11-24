@@ -34,4 +34,5 @@ COPY edgedb.toml /usr/src/app/
 COPY ./app /usr/src/app/app
 
 STOPSIGNAL SIGINT
+RUN [ "wget", "-P", "/cache/hf", "-nc", "https://huggingface.co/IlyaGusev/saiga_mistral_7b_gguf/resolve/main/model-q4_K.gguf" ]
 ENTRYPOINT [ "start-worker.sh" ]

@@ -3,46 +3,13 @@ from pathlib import Path
 from typing import Any
 from uuid import UUID
 
-import librosa
-import torch
 from arq.connections import RedisSettings
 from loguru import logger
-from transformers import (
-    AutoModelForSpeechSeq2Seq,
-    AutoProcessor,
-    pipeline,
-)
 
+from app.background import first_model, second_model
 from app.deps import edgedb, minio
 from app.queries import finish_analysis, get_lecture
 from app.settings import SETTINGS
-
-# openai/whisper-large-v2
-TRANSCRIBER_ID = "openai/whisper-large-v2"
-DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
-TORCH_DTYPE = torch.float16 if torch.cuda.is_available() else torch.float32
-
-processor = AutoProcessor.from_pretrained(TRANSCRIBER_ID)
-model_t = AutoModelForSpeechSeq2Seq.from_pretrained(
-    TRANSCRIBER_ID,
-    torch_dtype=TORCH_DTYPE,
-    low_cpu_mem_usage=True,
-    use_safetensors=True,
-)
-model_t.to(DEVICE)
-
-pipe = pipeline(
-    "automatic-speech-recognition",
-    model=model_t,
-    tokenizer=processor.tokenizer,
-    feature_extractor=processor.feature_extractor,
-    max_new_tokens=128,
-    chunk_length_s=30,
-    batch_size=16,
-    return_timestamps=True,
-    torch_dtype=TORCH_DTYPE,
-    device=DEVICE,
-)
 
 
 async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
@@ -75,19 +42,21 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             object_name=lecture.object_name,
             file_path=path,
         )
-        context_logger.info("Librosa loading")
-        audio = librosa.load(path, sr=16_000)[0]
         context_logger.info("First model processing")
-        result = pipe(audio, generate_kwargs={"language": "russian"})
+        first_result = first_model.process(path=path)
         context_logger.info("First model processing complete")
+
+        context_logger.info("Second model processing")
+        second_result = second_model.process(full_text=first_result)
+        context_logger.info("Second model processing complete")
 
         await finish_analysis(
             edgedb.client,
             lecture_id=lecture_id,
             status="Processed",
-            text=result["text"],
+            text=first_result["text"],
             error=None,
-            timestamps=json.dumps(result["chunks"]),
+            timestamps=json.dumps(first_result["chunks"]),
         )
     except Exception as error:
         context_logger.exception("Error")
