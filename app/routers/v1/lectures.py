@@ -10,7 +10,6 @@ from app.deps import arq, edgedb, minio
 from app.models.requests.create_lecture import CreateLecture
 from app.models.responses.created_lecture import CreatedLecture
 from app.models.responses.lecture import Lecture
-from app.models.responses.lecture_status import LectureStatus
 from app.queries import (
     create_lecture,
     delete_lectures,
