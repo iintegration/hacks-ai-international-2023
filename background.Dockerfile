@@ -14,7 +14,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
   PATH="/usr/src/app/scripts:${PATH}"
 
 RUN apt update \
-    && apt-get install -y --no-install-recommends git gcc python3-dev build-essential \
+    && apt-get install -y --no-install-recommends git gcc python3-dev build-essential wget \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install -U pip poetry && \
@@ -22,7 +22,7 @@ RUN pip install -U pip poetry && \
 
 COPY pyproject.toml poetry.lock /usr/src/app/
 RUN poetry install -n --with=background \
-    && apt-get purge -y --auto-remove gcc python3-dev build-essential git
+    && apt-get purge -y --auto-remove gcc python3-dev build-essential wget git
 
 COPY scripts /usr/src/app/scripts/
 RUN chmod +x /usr/src/app/scripts/*
