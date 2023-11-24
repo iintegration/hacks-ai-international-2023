@@ -34,4 +34,5 @@ COPY edgedb.toml /usr/src/app/
 COPY ./app /usr/src/app/app
 
 STOPSIGNAL SIGINT
+EXPOSE 80
 ENTRYPOINT [ "start.sh" ]
