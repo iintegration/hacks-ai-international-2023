@@ -62,6 +62,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             status="Error",
             text=None,
             error="Lecture without file",
+            timestamps=None
         )
         return
 
@@ -95,6 +96,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             status="Error",
             text=None,
             error=repr(error),
+            timestamps=None
         )
     finally:
         Path(path).unlink(missing_ok=True)
