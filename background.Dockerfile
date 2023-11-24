@@ -20,6 +20,8 @@ RUN apt update \
 RUN pip install -U pip poetry && \
     poetry config virtualenvs.create false
 
+RUN [ "wget", "-P", "/cache/hf", "-nc", "https://huggingface.co/IlyaGusev/saiga_mistral_7b_gguf/resolve/main/model-q4_K.gguf" ]
+
 COPY pyproject.toml poetry.lock /usr/src/app/
 RUN poetry install -n --with=background \
     && apt-get purge -y --auto-remove gcc python3-dev build-essential wget git
@@ -34,5 +36,4 @@ COPY edgedb.toml /usr/src/app/
 COPY ./app /usr/src/app/app
 
 STOPSIGNAL SIGINT
-RUN [ "wget", "-P", "/cache/hf", "-nc", "https://huggingface.co/IlyaGusev/saiga_mistral_7b_gguf/resolve/main/model-q4_K.gguf" ]
 ENTRYPOINT [ "start-worker.sh" ]
