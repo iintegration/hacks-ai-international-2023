@@ -87,7 +87,7 @@ async def lecture_info(lecture_id: UUID) -> Lecture:
         download_link = minio.client.presigned_get_object(
             bucket_name=SETTINGS.s3_bucket,
             object_name=lecture.object_name,
-            timedelta=timedelta(hours=1),
+            expires=timedelta(hours=1),
         )
     else:
         download_link = None
