@@ -1,3 +1,4 @@
+import json
 from dataclasses import asdict
 from datetime import timedelta
 from http import HTTPStatus
@@ -34,7 +35,9 @@ async def all_lectures() -> list[PreviewLecture]:
 async def create(lecture: CreateLecture) -> CreatedLecture:
     filename_suffix = Path(lecture.filename).suffix
     created_lecture = await create_lecture(
-        edgedb.client, filename=lecture.filename, filename_suffix=filename_suffix
+        edgedb.client,
+        filename=lecture.filename,
+        filename_suffix=filename_suffix,
     )
 
     upload_url = await minio.client.presigned_put_object(
@@ -77,6 +80,8 @@ async def start_analyze(lecture_id: UUID) -> None:
 @router.get("/{lecture_id}/")
 async def lecture_info(lecture_id: UUID) -> Lecture:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
+    result = asdict(lecture)
+    result["timestamps"] = json.loads(lecture.timestamps)
 
     if lecture is None:
         raise HTTPException(
@@ -92,7 +97,7 @@ async def lecture_info(lecture_id: UUID) -> Lecture:
     else:
         download_link = None
 
-    return Lecture(download_link=download_link, **asdict(lecture))
+    return Lecture(download_link=download_link, **result)
 
 
 @router.delete("/")

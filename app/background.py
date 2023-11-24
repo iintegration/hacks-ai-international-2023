@@ -63,7 +63,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             status="Error",
             text=None,
             error="Lecture without file",
-            timestamps=None
+            timestamps=None,
         )
         return
 
@@ -87,7 +87,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             status="Processed",
             text=result["text"],
             error=None,
-            timestamps=json.dumps(result["chunks"])
+            timestamps=json.dumps(result["chunks"]),
         )
     except Exception as error:
         context_logger.exception("Error")
@@ -97,7 +97,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             status="Error",
             text=None,
             error=repr(error),
-            timestamps=None
+            timestamps=None,
         )
     finally:
         Path(path).unlink(missing_ok=True)
