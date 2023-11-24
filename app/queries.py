@@ -87,8 +87,7 @@ async def finish_analysis(
     *,
     lecture_id: uuid.UUID,
     status: str | None,
-    text: str | None,
-    error: str | None,
+    text: str,
 ) -> DeleteLecturesResult | None:
     return await executor.query_single(
         """\
@@ -96,14 +95,12 @@ async def finish_analysis(
         filter .id = <uuid>$lecture_id
         set {
             status := <optional str>$status,
-            text := <optional str>$text,
-            error := <optional str>$error
+            text := <str>$text
         }\
         """,
         lecture_id=lecture_id,
         status=status,
         text=text,
-        error=error,
     )
 
 

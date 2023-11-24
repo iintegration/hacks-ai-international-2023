@@ -84,13 +84,12 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             edgedb.client,
             lecture_id=lecture_id,
             status="Processed",
-            text=result["text"],
-            error=None,
+            text=result["text"]
         )
     except Exception as error:
         print("Error!", repr(error), error.__class__)
         traceback.print_exc()
-        await finish_analysis(edgedb.client, lecture_id=lecture_id, status="Error", text=None, error=repr(error))
+        # await finish_analysis(edgedb.client, lecture_id=lecture_id, status="Error", text=None)
     finally:
         Path(path).unlink(missing_ok=True)
 
