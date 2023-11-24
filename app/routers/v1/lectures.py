@@ -71,8 +71,8 @@ async def start_analyze(lecture_id: UUID) -> None:
     )
 
 
-@router.get("/{lecture_id}/status/")
-async def get_status(lecture_id: UUID) -> LectureStatus:
+@router.get("/{lecture_id}/")
+async def get_status(lecture_id: UUID) -> Lecture:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
 
     if lecture is None:
@@ -80,7 +80,7 @@ async def get_status(lecture_id: UUID) -> LectureStatus:
             status_code=HTTPStatus.NOT_FOUND, detail="Lecture not found"
         )
 
-    return LectureStatus(status=lecture.status.value)
+    return cast(Lecture, await get_lecture(edgedb.client, id=lecture_id))
 
 
 @router.delete("/")

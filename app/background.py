@@ -56,13 +56,12 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
 
     print(lecture.object_name is None)
     if lecture.object_name is None:
-        await finish_analysis(
-            edgedb.client,
-            lecture_id=lecture_id,
-            status="Error",
-            text=None,
-            error="Lecture doesnt have file",
-        )
+        # await finish_analysis(
+        #     edgedb.client,
+        #     lecture_id=lecture_id,
+        #     status="Error",
+        #     text=None
+        # )
         return
 
     path = lecture.object_name + lecture.filename
@@ -79,12 +78,11 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
         print("Starting pipe")
         result = pipe(audio, generate_kwargs={"language": "russian"})
         print(result)
-        await edgedb.client.ensure_connected()
         await finish_analysis(
             edgedb.client,
             lecture_id=lecture_id,
             status="Processed",
-            text=result["text"][0:100]
+            text=result["text"]
         )
     except Exception as error:
         print("Error!", repr(error), error.__class__)
