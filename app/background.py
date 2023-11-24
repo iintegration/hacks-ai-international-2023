@@ -56,12 +56,13 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
 
     print(lecture.object_name is None)
     if lecture.object_name is None:
-        # await finish_analysis(
-        #     edgedb.client,
-        #     lecture_id=lecture_id,
-        #     status="Error",
-        #     text=None
-        # )
+        await finish_analysis(
+            edgedb.client,
+            lecture_id=lecture_id,
+            status="Error",
+            text=None,
+            error="Lecture without file"
+        )
         return
 
     path = lecture.object_name + lecture.filename
@@ -82,14 +83,24 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             edgedb.client,
             lecture_id=lecture_id,
             status="Processed",
-            text=result["text"]
+            text=result["text"],
+            error=None
         )
     except Exception as error:
         print("Error!", repr(error), error.__class__)
         traceback.print_exc()
-        # await finish_analysis(edgedb.client, lecture_id=lecture_id, status="Error", text=None)
+        await finish_analysis(edgedb.client, lecture_id=lecture_id, status="Error", text=None, error=repr(error))
     finally:
         Path(path).unlink(missing_ok=True)
+
+
+async def startup(_ctx: dict[str, Any]) -> None:
+    await edgedb.client.execute("""
+        CONFIGURE INSTANCE SET session_idle_timeout :=
+            <duration>'5 minutes';
+        CONFIGURE INSTANCE SET session_idle_transaction_timeout :=
+            <duration>'5 minutes';
+    """)
 
 
 async def shutdown(_ctx: dict[str, Any]) -> None:
@@ -101,6 +112,7 @@ class BackgroundSettings:
     redis_settings = RedisSettings.from_dsn(
         SETTINGS.redis_dsn.unicode_string()
     )
+    on_startup = startup
     on_shutdown = shutdown
 
     max_jobs = 1
