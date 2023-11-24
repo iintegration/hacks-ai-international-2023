@@ -2,9 +2,6 @@ import edgedb
 
 from app.settings import SETTINGS
 
-if SETTINGS.edgedb_dsn:
-    dsn = SETTINGS.edgedb_dsn.unicode_string()
-else:
-    dsn = None
+dsn = SETTINGS.edgedb_dsn.unicode_string() if SETTINGS.edgedb_dsn else None
 
 client = edgedb.create_async_client(dsn=dsn)
