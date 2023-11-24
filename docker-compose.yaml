@@ -10,7 +10,7 @@ services:
     restart: always
     image: edgedb/edgedb:4.1
     volumes:
-      - edgedb-data:/var/lib/edgedb/data:/var/lib/edgedb/data
+      - edgedb-data:/var/lib/edgedb/data
       - "./dbschema:/dbschema"
     env_file:
       - .env
