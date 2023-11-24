@@ -86,9 +86,11 @@ def sliding_window(lst, window_size, step_size):
 def build_index_time(full_text, chunk_size, chunk_overlap):
     """База текстовых батчей на основе таймкодов транскрибатора."""
     documents = []
+    print(full_text)
     for chunk in sliding_window(
         full_text["chunks"], chunk_size, chunk_overlap
     ):
+        print("Chunk", chunk)
         meta_data = (chunk[0]["timestamp"][0], chunk[-1]["timestamp"][0])
         chunk_text = " ".join([element["text"] for element in chunk])
         documents.append(
