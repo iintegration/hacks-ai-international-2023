@@ -154,9 +154,7 @@ class Result(TypedDict):
 
 
 def process(full_text: first_model.Result) -> list[Result]:
-    print(os.listdir(Path(model_path).parent))
-    print(Path(model_path))
-    model_s = Llama(model_path=Path(model_path), n_ctx=n_ctx, n_gpu_layers=-1)
+    model_s = Llama(model_path=model_path, n_ctx=n_ctx, n_gpu_layers=-1)
 
     db = build_index_time(full_text, 10, 5)
     # ищем список терминов
