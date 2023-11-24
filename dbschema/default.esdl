@@ -38,12 +38,5 @@ module default {
         }
         text: str;
         error: str;
-
-        index fts::index on (
-            fts::with_options(
-              .text,
-              language := fts::Language.rus
-            )
-        );
     }
 }
