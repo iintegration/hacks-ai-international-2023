@@ -18,7 +18,9 @@ module default {
     scalar type LectureStatus extending enum<Created, Processing, Processed, Error>;
 
     type File extending meta::Times {
-        required filename: str;
+        required filename: str {
+            annotation description := 'Название файла пользователя';
+        }
         link lecture := .<file[is Lecture];
 
         index fts::index on (
@@ -36,7 +38,12 @@ module default {
         link file: File {
             on source delete delete target;
         }
-        text: str;
-        error: str;
+        text: str {
+            annotation description := 'Полный текст лекции';
+        }
+        error: str {
+            annotation description := 'Ошибка, которая возникла во время обработки моделями';
+        }
+
     }
 }

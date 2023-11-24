@@ -1,6 +1,6 @@
+from dataclasses import asdict
 from datetime import timedelta
 from http import HTTPStatus
-from typing import cast
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
@@ -10,6 +10,7 @@ from app.deps import arq, edgedb, minio
 from app.models.requests.create_lecture import CreateLecture
 from app.models.responses.created_lecture import CreatedLecture
 from app.models.responses.lecture import Lecture
+from app.models.responses.preview_lecture import PreviewLecture
 from app.queries import (
     create_lecture,
     delete_lectures,
@@ -23,12 +24,13 @@ router = APIRouter(prefix="/lectures")
 
 
 @router.get("/")
-async def all_lectures() -> list[Lecture]:
-    return cast(list[Lecture], await get_lectures(edgedb.client))
+async def all_lectures() -> list[PreviewLecture]:
+    lectures = await get_lectures(edgedb.client)
+    return [PreviewLecture(**asdict(x)) for x in lectures]
 
 
 @router.post("/", status_code=HTTPStatus.CREATED)
-async def create_lecture(lecture: CreateLecture) -> CreatedLecture:
+async def create(lecture: CreateLecture) -> CreatedLecture:
     created_lecture = await create_lecture(
         edgedb.client, filename=lecture.filename
     )
@@ -71,7 +73,7 @@ async def start_analyze(lecture_id: UUID) -> None:
 
 
 @router.get("/{lecture_id}/")
-async def get_lecture(lecture_id: UUID) -> Lecture:
+async def lecture_info(lecture_id: UUID) -> Lecture:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
 
     if lecture is None:
@@ -79,7 +81,16 @@ async def get_lecture(lecture_id: UUID) -> Lecture:
             status_code=HTTPStatus.NOT_FOUND, detail="Lecture not found"
         )
 
-    return cast(Lecture, await get_lecture(edgedb.client, id=lecture_id))
+    if lecture.object_name:
+        download_link = minio.client.presigned_get_object(
+            bucket_name=SETTINGS.s3_bucket,
+            object_name=lecture.object_name,
+            timedelta=timedelta(hours=1),
+        )
+    else:
+        download_link = None
+
+    return Lecture(download_link=download_link, **asdict(lecture))
 
 
 @router.delete("/")
