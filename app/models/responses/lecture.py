@@ -7,4 +7,5 @@ class Lecture(BaseModel):
     id: UUID
     status: str
     filename: str
-    object_name: str
+    object_name: str | None
+    text: str | None

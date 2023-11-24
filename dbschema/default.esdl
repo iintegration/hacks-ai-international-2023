@@ -15,7 +15,7 @@ module meta {
 }
 
 module default {
-    scalar type LectureStatus extending enum<Created, Processing, Processed>;
+    scalar type LectureStatus extending enum<Created, Processing, Processed, Error>;
 
     type File extending meta::Times {
         required filename: str;
@@ -36,5 +36,14 @@ module default {
         link file: File {
             on source delete delete target;
         }
+        text: str;
+        error: str;
+
+        index fts::index on (
+            fts::with_options(
+              .text,
+              language := fts::Language.rus
+            )
+        );
     }
 }

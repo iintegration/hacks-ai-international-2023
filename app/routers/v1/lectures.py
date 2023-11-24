@@ -63,9 +63,7 @@ async def start_analyze(lecture_id: UUID) -> None:
             bucket_name=SETTINGS.s3_bucket, object_name=lecture.object_name
         )
     except S3Error as error:
-        raise HTTPException(
-            status_code=404, detail=error.message
-        ) from error
+        raise HTTPException(status_code=404, detail=error.message) from error
 
     await set_lecture_status(edgedb.client, id=lecture_id, status="Processing")
     await arq.client.enqueue_job(
