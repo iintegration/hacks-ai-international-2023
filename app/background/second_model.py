@@ -1,5 +1,7 @@
+import os
 import re
 from collections import defaultdict
+from pathlib import Path
 from typing import TypedDict
 
 import torch
@@ -152,7 +154,10 @@ class Result(TypedDict):
 
 
 def process(full_text: first_model.Result) -> list[Result]:
-    model_s = Llama(model_path=model_path, n_ctx=n_ctx, n_gpu_layers=-1)
+    print(os.listdir(model_path))
+    print(os.listdir(Path(model_path)))
+    print(Path(model_path))
+    model_s = Llama(model_path=Path(model_path), n_ctx=n_ctx, n_gpu_layers=-1)
 
     db = build_index_time(full_text, 10, 5)
     # ищем список терминов
