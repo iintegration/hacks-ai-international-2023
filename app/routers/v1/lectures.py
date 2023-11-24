@@ -80,13 +80,16 @@ async def start_analyze(lecture_id: UUID) -> None:
 @router.get("/{lecture_id}/")
 async def lecture_info(lecture_id: UUID) -> Lecture:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
-    result = asdict(lecture)
-    result["timestamps"] = json.loads(lecture.timestamps)
 
     if lecture is None:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail="Lecture not found"
         )
+
+    result = asdict(lecture)
+
+    if lecture.timestamps:
+        result["timestamps"] = json.loads(lecture.timestamps)
 
     if lecture.object_name:
         download_link = await minio.client.presigned_get_object(
