@@ -3,7 +3,8 @@ select Lecture {
     status,
     filename := .file.filename,
     object_name := <str>(.file.id),
-    text := .text
+    text := .text,
+    error := .error
 }
 filter .id = <uuid>$id
 limit 1

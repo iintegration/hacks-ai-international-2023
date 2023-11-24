@@ -20,7 +20,6 @@ class NoPydanticValidation:
     @classmethod
     def __get_validators__(cls):
         from pydantic.dataclasses import dataclass as pydantic_dataclass
-
         pydantic_dataclass(cls)
         cls.__pydantic_model__.__get_validators__ = lambda: []
         return []
@@ -44,6 +43,7 @@ class GetLectureResult(NoPydanticValidation):
     filename: str | None
     object_name: str | None
     text: str | None
+    error: str | None
 
 
 class LectureStatus(enum.Enum):
@@ -119,7 +119,8 @@ async def get_lecture(
             status,
             filename := .file.filename,
             object_name := <str>(.file.id),
-            text := .text
+            text := .text,
+            error := .error
         }
         filter .id = <uuid>$id
         limit 1\
@@ -138,7 +139,8 @@ async def get_lectures(
             status,
             filename := .file.filename,
             object_name := <str>(.file.id),
-            text := .text
+            text := .text,
+            error := .error
         }\
         """,
     )
