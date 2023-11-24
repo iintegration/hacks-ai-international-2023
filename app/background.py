@@ -47,6 +47,7 @@ pipe = pipeline(
 async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
     lecture = await get_lecture(edgedb.client, id=lecture_id)
 
+    print(lecture)
     if lecture is None:
         return
 
