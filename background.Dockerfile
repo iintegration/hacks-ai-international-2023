@@ -20,11 +20,9 @@ RUN apt update \
 RUN pip install -U pip poetry && \
     poetry config virtualenvs.create false
 
-RUN mkdir -p /cache/saiga && wget -q -O /cache/saiga/model-q4_K.gguf https://huggingface.co/IlyaGusev/saiga_mistral_7b_gguf/resolve/main/model-q4_K.gguf
-
 COPY pyproject.toml poetry.lock /usr/src/app/
 RUN poetry install -n --with=background \
-    && apt-get purge -y --auto-remove gcc python3-dev build-essential wget git
+    && apt-get purge -y --auto-remove gcc python3-dev build-essential git
 
 COPY scripts /usr/src/app/scripts/
 RUN chmod +x /usr/src/app/scripts/*
