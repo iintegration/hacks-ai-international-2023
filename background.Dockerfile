@@ -1,5 +1,5 @@
 FROM edgedb/edgedb-cli as edgedb-cli
-FROM python:3.12 as play
+FROM python:3.11-slim as play
 
 WORKDIR /usr/src/app
 

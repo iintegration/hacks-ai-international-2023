@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 edgedb = "^1.7.0"
 arq = "^0.25.0"
 pydantic = "^2.5.1"
@@ -23,11 +23,11 @@ torch = {version = "^2.1.1+cpu", source = "pytorch"}
 librosa = "^0.10.1"
 transformers = "^4.35.2"
 
-
 [tool.poetry.group.api]
 optional = true
 
 [tool.poetry.group.api.dependencies]
+python = "^3.12"
 fastapi = "^0.101.1"
 uvicorn = "^0.24.0.post1"
 
