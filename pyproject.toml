@@ -14,6 +14,7 @@ pydantic = "^2.5.1"
 pydantic-settings = "^2.1.0"
 miniopy-async = "^1.17"
 redis = "^5.0.1"
+loguru = "^0.7.2"
 
 [tool.poetry.group.background]
 optional = true
