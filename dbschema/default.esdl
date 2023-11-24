@@ -21,6 +21,10 @@ module default {
         required filename: str {
             annotation description := 'Название файла пользователя';
         }
+        required filename_suffix: str {
+            annotation description := 'Расширение файла пользователя';
+        }
+        object_name := <str>(.id) ++ .filename_suffix;
         link lecture := .<file[is Lecture];
 
         index fts::index on (

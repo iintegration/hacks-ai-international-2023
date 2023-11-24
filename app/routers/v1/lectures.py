@@ -1,6 +1,7 @@
 from dataclasses import asdict
 from datetime import timedelta
 from http import HTTPStatus
+from pathlib import Path
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
@@ -31,8 +32,9 @@ async def all_lectures() -> list[PreviewLecture]:
 
 @router.post("/", status_code=HTTPStatus.CREATED)
 async def create(lecture: CreateLecture) -> CreatedLecture:
+    filename_suffix = Path(lecture.filename).suffix
     created_lecture = await create_lecture(
-        edgedb.client, filename=lecture.filename
+        edgedb.client, filename=lecture.filename, filename_suffix=filename_suffix
     )
 
     upload_url = await minio.client.presigned_put_object(

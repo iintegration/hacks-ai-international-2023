@@ -2,7 +2,7 @@ select Lecture {
     id,
     status,
     filename := .file.filename,
-    object_name := <str>(.file.id),
+    object_name := .file.object_name,
     text := .text,
     error := .error,
     timestamps := .timestamps
