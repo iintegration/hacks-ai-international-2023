@@ -9,3 +9,4 @@ class Lecture(BaseModel):
     filename: str
     object_name: str | None
     text: str | None
+    error: str | None
