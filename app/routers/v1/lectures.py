@@ -96,6 +96,7 @@ async def lecture_info(lecture_id: UUID) -> Lecture:
             bucket_name=SETTINGS.s3_bucket,
             object_name=lecture.object_name,
             expires=timedelta(hours=1),
+            change_host=SETTINGS.s3_public_host,
         )
     else:
         download_link = None
