@@ -49,6 +49,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
         context_logger.info("Second model processing")
         second_result = second_model.process(full_text=first_result)
         context_logger.info("Second model processing complete")
+        context_logger.info(second_result)
 
         await finish_analysis(
             edgedb.client,
