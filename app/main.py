@@ -20,12 +20,17 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event() -> None:
+    await edgedb.client.ensure_connected()
     await edgedb.client.execute("""
-        CONFIGURE INSTANCE SET session_idle_timeout :=
-            <duration>'5 minutes';
+            CONFIGURE INSTANCE SET session_idle_timeout :=
+                <duration>'5 minutes';
+        """)
+    await edgedb.client.execute(
+        """
         CONFIGURE INSTANCE SET session_idle_transaction_timeout :=
             <duration>'5 minutes';
-    """)
+        """
+    )
     await arq.init_client()
 
 
