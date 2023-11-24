@@ -1,3 +1,4 @@
+FROM edgedb/edgedb-cli as edgedb-cli
 FROM python:3.12 as play
 
 WORKDIR /usr/src/app
@@ -25,6 +26,10 @@ RUN poetry install -n --with=background \
 
 COPY scripts /usr/src/app/scripts/
 RUN chmod +x /usr/src/app/scripts/*
+
+COPY --from=edgedb-cli /usr/bin/edgedb /usr/bin/
+COPY dbschema /usr/src/app/dbschema/
+COPY edgedb.toml /usr/src/app/
 
 COPY ./app /usr/src/app/app
 
