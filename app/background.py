@@ -60,15 +60,15 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
         )
         return
 
-    try:
+    # try:
         with tempfile.TemporaryDirectory() as tmpdirname:
-            file_path = Path(tmpdirname) / str(lecture_id)
+            file_path = Path(tmpdirname) / lecture.filename
             await minio.client.fget_object(
                 bucket_name=SETTINGS.s3_bucket,
                 object_name=lecture.object_name,
                 file_path=str(file_path),
             )
-            audio = librosa.load(file_path, sr=16_000)[0]
+            audio = librosa.load(str(file_path), sr=16_000)[0]
             result = pipe(audio, generate_kwargs={"language": "russian"})
             await finish_analysis(
                 edgedb.client,
@@ -77,14 +77,15 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
                 text=result["text"],
                 error=None,
             )
-    except Exception as error:
-        await finish_analysis(
-            edgedb.client,
-            lecture_id=lecture_id,
-            status="Error",
-            text=None,
-            error=str(error),
-        )
+    # except Exception as error:
+    #     print(error)
+    #     await finish_analysis(
+    #         edgedb.client,
+    #         lecture_id=lecture_id,
+    #         status="Error",
+    #         text=None,
+    #         error=str(error),
+    #     )
 
 
 async def shutdown(_ctx: dict[str, Any]) -> None:
