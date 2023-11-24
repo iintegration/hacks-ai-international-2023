@@ -64,7 +64,7 @@ async def start_analyze(lecture_id: UUID) -> None:
         )
     except S3Error as error:
         raise HTTPException(
-            status_code=404, detail="Lecture file not found"
+            status_code=404, detail=error.message
         ) from error
 
     await set_lecture_status(edgedb.client, id=lecture_id, status="Processing")
