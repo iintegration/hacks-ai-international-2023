@@ -44,6 +44,17 @@ class GetLectureResult(NoPydanticValidation):
     object_name: str | None
     text: str | None
     error: str | None
+    timestamps: str | None
+
+
+@dataclasses.dataclass
+class GetLecturesResult(NoPydanticValidation):
+    id: uuid.UUID
+    status: LectureStatus
+    filename: str | None
+    object_name: str | None
+    text: str | None
+    error: str | None
 
 
 class LectureStatus(enum.Enum):
@@ -88,6 +99,7 @@ async def finish_analysis(
     lecture_id: uuid.UUID,
     status: str | None,
     text: str | None,
+    timestamps: str | None,
     error: str | None,
 ) -> DeleteLecturesResult | None:
     return await executor.query_single(
@@ -97,12 +109,14 @@ async def finish_analysis(
         set {
             status := <optional str>$status,
             text := <optional str>$text,
+            timestamps := <optional json>$timestamps,
             error := <optional str>$error
         }\
         """,
         lecture_id=lecture_id,
         status=status,
         text=text,
+        timestamps=timestamps,
         error=error,
     )
 
@@ -120,7 +134,8 @@ async def get_lecture(
             filename := .file.filename,
             object_name := <str>(.file.id),
             text := .text,
-            error := .error
+            error := .error,
+            timestamps := .timestamps
         }
         filter .id = <uuid>$id
         limit 1\
@@ -131,7 +146,7 @@ async def get_lecture(
 
 async def get_lectures(
     executor: edgedb.AsyncIOExecutor,
-) -> list[GetLectureResult]:
+) -> list[GetLecturesResult]:
     return await executor.query(
         """\
         select Lecture {

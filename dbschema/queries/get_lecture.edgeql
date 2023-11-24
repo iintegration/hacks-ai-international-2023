@@ -4,7 +4,8 @@ select Lecture {
     filename := .file.filename,
     object_name := <str>(.file.id),
     text := .text,
-    error := .error
+    error := .error,
+    timestamps := .timestamps
 }
 filter .id = <uuid>$id
 limit 1

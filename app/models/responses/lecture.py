@@ -8,5 +8,6 @@ class Lecture(BaseModel):
     status: str
     filename: str
     text: str | None
+    timestamps: dict | None
     error: str | None
     download_link: str | None

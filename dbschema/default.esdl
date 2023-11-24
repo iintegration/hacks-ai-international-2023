@@ -41,6 +41,7 @@ module default {
         text: str {
             annotation description := 'Полный текст лекции';
         }
+        timestamps: json;
         error: str {
             annotation description := 'Ошибка, которая возникла во время обработки моделями';
         }

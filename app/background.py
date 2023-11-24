@@ -85,6 +85,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             status="Processed",
             text=result["text"],
             error=None,
+            timestamps=result["chunks"]
         )
     except Exception as error:
         context_logger.exception("Error")
