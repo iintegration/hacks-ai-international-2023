@@ -20,6 +20,7 @@ class NoPydanticValidation:
     @classmethod
     def __get_validators__(cls):
         from pydantic.dataclasses import dataclass as pydantic_dataclass
+
         pydantic_dataclass(cls)
         cls.__pydantic_model__.__get_validators__ = lambda: []
         return []
@@ -116,6 +117,7 @@ async def finish_analysis(
     timestamps: str | None,
     error: str | None,
     terms: str | None,
+    summary: str | None,
 ) -> DeleteLecturesResult | None:
     return await executor.query_single(
         """\
@@ -137,7 +139,8 @@ async def finish_analysis(
                         end_timestamp := <float32>term['end_timestamp']
                     }
                 )
-            )
+            ),
+            summary := <optional str>$summary
         }\
         """,
         lecture_id=lecture_id,
@@ -146,6 +149,7 @@ async def finish_analysis(
         timestamps=timestamps,
         error=error,
         terms=terms,
+        summary=summary,
     )
 
 

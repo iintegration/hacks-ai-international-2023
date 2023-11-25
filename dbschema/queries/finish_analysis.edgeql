@@ -16,5 +16,6 @@ set {
                 end_timestamp := <float32>term['end_timestamp']
             }
         )
-    )
+    ),
+    summary := <optional str>$summary
 }
