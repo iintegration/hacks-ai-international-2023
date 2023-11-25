@@ -1,3 +1,4 @@
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -10,7 +11,7 @@ class Lecture(BaseModel):
     status: str
     filename: str
     text: str | None
-    timestamps: list[dict] | None
+    timestamps: list[dict[str, Any]] | None
     error: str | None
     download_link: str | None
     terms: list[Term]
