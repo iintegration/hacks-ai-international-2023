@@ -57,9 +57,20 @@
 
 В папке `ml` содержатся Jupiter Notebooks с разметкой конспекта лекции, запуск ML сервиса, обработка аудиозаписей и файл `sample_submission.csv`
 
-
 ### Тестовый файл аудиозаписи для проверки демки находится в папке `test_audio`
 Так как наша демо находится на сервере, где доступен только процессор, большие файлы аудиозаписей будут обрабатываться очень долго.
+
+### Структура
+- `/app` - основная директория API ([FastAPI](https://fastapi.tiangolo.com/))
+- `/app/background` - модули, связанные с фоновой обработкой аудио ([arq](https://arq-docs.helpmanual.io/))
+- `/app/routes/v1/lectures.py` - роуты API
+- `/app/queries.py` - [сгенерированные](https://www.edgedb.com/docs/clients/python/api/codegen) запросы к [EdgeDB](https://edgedb.com)
+- `/dbschema/default.esdl` - схема БД
+- `/dbschema/queries` - запросы к EdgeDB, которые [генерируются](https://www.edgedb.com/docs/clients/python/api/codegen) в `/app/queries.py`.
+- `/dbschema/migrations` - миграции БД
+- `/frontend` - фронтенд ([Vue](https://vuejs.org/))
+- `/scripts` - bash скрипты для запуска API и воркера для очереди задач
+- `captain-definition-*` - файлы с описанием как запускать каждый элемент веб-сервиса в [CapRover](https://caprover.com/)
 
 ## Деплой
 
