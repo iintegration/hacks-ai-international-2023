@@ -196,7 +196,7 @@ def process(full_text: first_model.Result) -> list[Result]:
     Текст
     {term_text}
     """
-        meta_time = first_retrieve(chain_prompt, db).metadata
+        meta_time = first_retrieve(f'{chain_prompt} {term_text}', db).metadata
 
         terms_dict["term"] = t
 
