@@ -1,7 +1,5 @@
-import os
 import re
 from collections import defaultdict
-from pathlib import Path
 from typing import TypedDict
 
 import torch
@@ -30,7 +28,6 @@ top_p = 0.5
 temperature = 0.05
 repeat_penalty = 1.1
 model_path = "/cache/saiga/model-q4_K.gguf"
-
 
 ROLE_TOKENS = {"user": USER_TOKEN, "bot": BOT_TOKEN, "system": SYSTEM_TOKEN}
 
@@ -77,14 +74,11 @@ def chat_saiga(message, model):
 
 
 def sliding_window(lst, window_size, step_size):
-    '''Создание окна для базы на основе таймкодов'''
+    """Создание окна для базы на основе таймкодов."""
     windows = []
-    if len(lst) >= window_size:
-        right = len(lst) - window_size + 1
-    else:
-        right = len(lst)
+    right = len(lst) - window_size + 1 if len(lst) >= window_size else len(lst)
     for i in range(0, right, step_size):
-        windows.append(lst[i:i + window_size])
+        windows.append(lst[i : i + window_size])
     return windows
 
 
@@ -196,7 +190,7 @@ def process(full_text: first_model.Result) -> list[Result]:
     Текст
     {term_text}
     """
-        meta_time = first_retrieve(f'{chain_prompt} {term_text}', db).metadata
+        meta_time = first_retrieve(f"{chain_prompt} {term_text}", db).metadata
 
         terms_dict["term"] = t
 
@@ -211,35 +205,3 @@ def process(full_text: first_model.Result) -> list[Result]:
         terms_dict_list.append(terms_dict)
 
     return terms_dict_list
-
-    #
-    #
-    # for document_id in db.get()["ids"]:
-    #     db._collection.delete(ids=document_id)
-    # db.persist()
-    #
-    # db = build_index_big(full_text["text"], 3000, 30)
-    #
-    # batch_summ = []
-    # for batch in db.get()["documents"]:
-    #     summ_prompt = f"""
-    #     Оставь только важную информацию в данном тексте.
-    #     Информацию выводи сплошным текстом
-    #     Формат вывода:
-    #     Важная информация: {{информация}}
-    #
-    #
-    #     Текст:
-    #     {batch}
-    #     """
-    #     with torch.no_grad():
-    #         output = chat_saiga(summ_prompt, model_s)
-    #     output = output[len("Важная информация:") :] + "\n"
-    #     print(chat_saiga(summ_prompt, model_s).replace("\n", ""))
-    #     batch_summ.append(output)
-    #     batch_summ = " ".join(batch_summ)
-    #
-    # for document_id in db.get()["ids"]:
-    #     db._collection.delete(ids=document_id)
-    # db.persist()
-    # torch.cuda.empty_cache()
