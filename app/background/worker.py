@@ -13,6 +13,7 @@ from app.settings import SETTINGS
 
 
 async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
+    await edgedb.client.ensure_connected()
     context_logger = logger.bind(lecture_id=lecture_id)
     context_logger.info("Start")
 
