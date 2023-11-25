@@ -15,6 +15,7 @@ from app.models.responses.lecture import Lecture
 from app.models.responses.preview_lecture import PreviewLecture
 from app.queries import (
     create_lecture,
+    delete_lecture,
     delete_lectures,
     get_lecture,
     get_lectures,
@@ -102,6 +103,11 @@ async def lecture_info(lecture_id: UUID) -> Lecture:
         download_link = None
 
     return Lecture(download_link=download_link, **result)
+
+
+@router.delete("/{lecture_id}/")
+async def delete(lecture_id: UUID) -> None:
+    await delete_lecture(edgedb.client, lecture_id=lecture_id)
 
 
 @router.delete("/")
