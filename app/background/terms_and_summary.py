@@ -10,6 +10,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 from llama_cpp import Llama
 
+from app.background import transcriber
+
 EMBEDDER_ID = "ai-forever/sbert_large_nlu_ru"
 SYSTEM_PROMPT = "Ты — Сайга, русскоязычный автоматический ассистент. Ты разговариваешь c людьми и помогаешь им."
 SYSTEM_TOKEN = 1587
@@ -150,7 +152,7 @@ class Result(TypedDict):
     end: float
 
 
-def process(full_text: first_model.Result) -> tuple[list[Result], str]:
+def process(full_text: transcriber.Result) -> tuple[list[Result], str]:
     model_s = Llama(model_path=model_path, n_ctx=n_ctx, n_gpu_layers=-1)
 
     db = build_index_time(full_text, 10, 5)
