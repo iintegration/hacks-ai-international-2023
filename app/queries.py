@@ -20,7 +20,6 @@ class NoPydanticValidation:
     @classmethod
     def __get_validators__(cls):
         from pydantic.dataclasses import dataclass as pydantic_dataclass
-
         pydantic_dataclass(cls)
         cls.__pydantic_model__.__get_validators__ = lambda: []
         return []
@@ -135,8 +134,8 @@ async def finish_analysis(
                     insert Term {
                         term := <str>term['term'],
                         definition := <str>term['definition'],
-                        start_timestamp := <float32>term['start_timestamp'],
-                        end_timestamp := <float32>term['end_timestamp']
+                        start_timestamp := <float32>term['start'],
+                        end_timestamp := <float32>term['end']
                     }
                 )
             ),

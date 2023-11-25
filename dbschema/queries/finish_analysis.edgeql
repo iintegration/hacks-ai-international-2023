@@ -12,8 +12,8 @@ set {
             insert Term {
                 term := <str>term['term'],
                 definition := <str>term['definition'],
-                start_timestamp := <float32>term['start_timestamp'],
-                end_timestamp := <float32>term['end_timestamp']
+                start_timestamp := <float32>term['start'],
+                end_timestamp := <float32>term['end']
             }
         )
     ),
