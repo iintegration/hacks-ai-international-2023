@@ -45,6 +45,16 @@ class GetLectureResult(NoPydanticValidation):
     text: str | None
     error: str | None
     timestamps: str | None
+    terms: list[GetLectureResultTermsItem]
+
+
+@dataclasses.dataclass
+class GetLectureResultTermsItem(NoPydanticValidation):
+    id: uuid.UUID
+    term: str
+    definition: str
+    start_timestamp: float
+    end_timestamp: float
 
 
 @dataclasses.dataclass
@@ -152,7 +162,8 @@ async def get_lecture(
             object_name := .file.object_name,
             text := .text,
             error := .error,
-            timestamps := .timestamps
+            timestamps := .timestamps,
+            terms := .terms { term, definition, start_timestamp, end_timestamp }
         }
         filter .id = <uuid>$id
         limit 1\

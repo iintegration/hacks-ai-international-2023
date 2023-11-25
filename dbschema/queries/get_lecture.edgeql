@@ -5,7 +5,8 @@ select Lecture {
     object_name := .file.object_name,
     text := .text,
     error := .error,
-    timestamps := .timestamps
+    timestamps := .timestamps,
+    terms := .terms { term, definition, start_timestamp, end_timestamp }
 }
 filter .id = <uuid>$id
 limit 1
