@@ -1,0 +1,33 @@
+<input type="file" id="selector" multiple>
+<button onclick="upload()">Upload</button>
+
+<div id="status">No uploads</div>
+
+<script type="text/javascript">
+  // `upload` iterates through all files selected and invokes a helper function called `retrieveNewURL`.
+  function upload() {
+        // Get selected files from the input element.
+        var files = document.querySelector("#selector").files;
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            uploadFile(file, "https://minio-api.sosus.org/bucket/c07f2ab4-8b60-11ee-aaae-93e240414e3f.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=le5rvP6nEYvgZq4Y873Q%2F20231125%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231125T070336Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=dd725f8e156c6588030b59a6492905ecfd47cb9b8cdbc866019394ff58064fdf");
+        }
+    }
+
+    // ``uploadFile` accepts the current filename and the pre-signed URL. It then uses `Fetch API`
+    // to upload this file to S3 at `play.min.io:9000` using the URL:
+    function uploadFile(file, url) {
+        if (document.querySelector('#status').innerText === 'No uploads') {
+            document.querySelector('#status').innerHTML = '';
+        }
+        fetch(url, {
+            method: 'PUT',
+            body: file
+        }).then(() => {
+            // If multiple files are uploaded, append upload status on the next line.
+            document.querySelector('#status').innerHTML += `<br>Uploaded ${file.name}.`;
+        }).catch((e) => {
+            console.error(e);
+        });
+    }
+</script>

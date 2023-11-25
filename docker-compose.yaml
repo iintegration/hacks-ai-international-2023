@@ -50,6 +50,15 @@ services:
     env_file:
       - .env
 
+  frontend:
+    restart: always
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+
+    depends_on:
+      - app
+
 volumes:
   redis-data:
   edgedb-data:
