@@ -35,6 +35,13 @@ module default {
         );
     }
 
+    type Term extending meta::Times {
+        required term: str;
+        required definition: str;
+        required start_timestamp: float32;
+        required end_timestamp: float32;
+    }
+
     type Lecture extending meta::Times {
         required status: LectureStatus {
             default := LectureStatus.Created;
@@ -46,6 +53,7 @@ module default {
             annotation description := 'Полный текст лекции';
         }
         timestamps: json;
+        multi link terms: Term;
         error: str {
             annotation description := 'Ошибка, которая возникла во время обработки моделями';
         }

@@ -31,6 +31,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             text=None,
             error="Lecture without file",
             timestamps=None,
+            terms=None
         )
         return
 
@@ -45,8 +46,8 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
         context_logger.info("First model processing")
         first_result = first_model.process(path=path)
         context_logger.info("First model processing complete")
-
         context_logger.info(first_result)
+
         context_logger.info("Second model processing")
         second_result = second_model.process(full_text=first_result)
         context_logger.info("Second model processing complete")
@@ -59,6 +60,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             text=first_result["text"],
             error=None,
             timestamps=json.dumps(first_result["chunks"]),
+            terms=json.dumps(second_result)
         )
     except Exception as error:
         context_logger.exception("Error")
@@ -69,6 +71,7 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             text=None,
             error=repr(error),
             timestamps=None,
+            terms=None
         )
     finally:
         Path(path).unlink(missing_ok=True)
@@ -79,13 +82,13 @@ async def startup(_ctx: dict[str, Any]) -> None:
     await edgedb.client.execute(
         """
         CONFIGURE INSTANCE SET session_idle_timeout :=
-            <duration>'5 minutes';
+            <duration>'15 minutes';
     """
     )
     await edgedb.client.execute(
         """
         CONFIGURE INSTANCE SET session_idle_transaction_timeout :=
-            <duration>'5 minutes';
+            <duration>'15 minutes';
         """
     )
 

@@ -104,6 +104,7 @@ async def finish_analysis(
     text: str | None,
     timestamps: str | None,
     error: str | None,
+    terms: str | None,
 ) -> DeleteLecturesResult | None:
     return await executor.query_single(
         """\
@@ -113,7 +114,19 @@ async def finish_analysis(
             status := <optional str>$status,
             text := <optional str>$text,
             timestamps := <optional json>$timestamps,
-            error := <optional str>$error
+            error := <optional str>$error,
+            terms := (
+                with raw_data := <optional json>$terms,
+
+                for term in json_array_unpack(raw_data) union (
+                    insert Term {
+                        term := <str>term['term'],
+                        definition := <str>term['definition'],
+                        start_timestamp := <float32>term['start_timestamp'],
+                        end_timestamp := <float32>term['end_timestamp']
+                    }
+                )
+            )
         }\
         """,
         lecture_id=lecture_id,
@@ -121,6 +134,7 @@ async def finish_analysis(
         text=text,
         timestamps=timestamps,
         error=error,
+        terms=terms,
     )
 
 
