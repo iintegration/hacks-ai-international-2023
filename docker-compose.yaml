@@ -28,6 +28,8 @@ services:
 
   app:
     restart: always
+    ports:
+      - "4000:80"
     build:
       context: .
       dockerfile: api.Dockerfile
@@ -52,6 +54,8 @@ services:
 
   frontend:
     restart: always
+    ports:
+      - "3000:80"
     build:
       context: .
       dockerfile: frontend.Dockerfile

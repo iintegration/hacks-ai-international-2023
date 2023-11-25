@@ -67,23 +67,17 @@
 
 #### Запуск
 
-```cmd
-docker compose up
-```
-
-#### Использование
-
-TODO
-
-### Без Docker
-
-#### Установка зависимостей
-
-```cmd
-pip install -r requirements.txt
-```
-
-#### Использование
-
-TODO
-
+1. Создайте `.env` файл из `.env.example`
+2. Укажите желаемые имя пользователя и пароль для minio
+3. Запустите minio командой `docker compose up -d minio` 
+4. Откройте в браузере [localhost:9000](http://localhost:9000).
+Введите логин и пароль из пункта 2.
+Перейдите на вкладку `Access Keys`, создайте новый ключ доступа с помощью кнопки `Create access key`
+5. Полученные `Access Key` и `Secret Key` укажите в
+`S3_ACCESS_KEY` и `S3_SECRET_KEY` в файле `.env` соответственно.
+6. Вернитесь в интерфейс minio во вкладку `Buckets`.
+Создайте новый bucket с помощью кнопки `Create Bucket`. Укажите имя и создайте bucket.
+7. Указанное имя пропишите в `S3_BUCKET` в файле `.env`
+8. Запустите `edgedb` с помощью команды `docker compose up edgedb`. Первый запуск БД может занять время
+9. Запустите все остальные контейнеры с помощью команды `docker compose up`
+10. Перейдите в веб интерфейс по адресу [localhost:3000](http://localhost:3000)

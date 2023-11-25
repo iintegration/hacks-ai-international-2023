@@ -62,6 +62,5 @@ module default {
         error: str {
             annotation description := 'Ошибка, которая возникла во время обработки моделями';
         }
-
     }
 }
