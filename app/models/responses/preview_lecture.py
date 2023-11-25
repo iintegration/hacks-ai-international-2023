@@ -7,5 +7,4 @@ class PreviewLecture(BaseModel):
     id: UUID
     status: str
     filename: str
-    text: str | None
     error: str | None

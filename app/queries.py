@@ -21,7 +21,6 @@ class NoPydanticValidation:
     @classmethod
     def __get_validators__(cls):
         from pydantic.dataclasses import dataclass as pydantic_dataclass
-
         pydantic_dataclass(cls)
         cls.__pydantic_model__.__get_validators__ = lambda: []
         return []
@@ -65,8 +64,6 @@ class GetLecturesResult(NoPydanticValidation):
     id: uuid.UUID
     status: LectureStatus
     filename: str | None
-    object_name: str | None
-    text: str | None
     error: str | None
 
 
@@ -202,8 +199,6 @@ async def get_lectures(
             id,
             status,
             filename := .file.filename,
-            object_name := <str>(.file.id),
-            text := .text,
             error := .error
         }\
         """,
