@@ -61,14 +61,17 @@
           Глоассарий не загружен
         </div>
 
-        <div class="down-section__glos__add-button" v-if="testData.terms != ''">
-          <img :src="require('@/assets/icons8-plus.svg')" style="cursor:pointer;">
-          <img :src="require('@/assets/Download_ico.png')" height="40" width="40" style="cursor:pointer;" >
+        <div class="down-section__glos__add-button" v-if="testData.terms">
+          <img :src="require('@/assets/Download_ico.png')" height="40" width="40" style="cursor:pointer;" @click="download" >
         </div>
       </div>
       <div class="down-section__consp">
-        <div v-if="testData.summary">
+        <div v-if="testData.summary" style="display: flex; flex-direction: column ">
           {{testData.summary}}
+          <div style="display: flex; flex-direction: column; align-items: center">
+            <img :src="require('@/assets/Download_ico.png')" height="40" width="40" style="cursor:pointer;" @click="download1" >
+          </div>
+
         </div>
         <div v-else style="display: flex; justify-content: center">
           Конспектр не загружен
@@ -126,6 +129,32 @@ export default {
           console.log(this.testData.terms[i])
         }
       }
+    },
+    download() {
+      let text = JSON.stringify(this.testData.terms);
+      let filename = 'export.json';
+      let element = document.createElement('a');
+      element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+      document.body.removeChild(element);
+  },
+    download1() {
+      let text = JSON.stringify(this.testData.summary);
+      let filename = 'conspect.txt';
+      let element = document.createElement('a');
+      element.setAttribute('href', 'data:application/txt;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+      document.body.removeChild(element);
     },
     backToBase() {
       this.selectFileId('')

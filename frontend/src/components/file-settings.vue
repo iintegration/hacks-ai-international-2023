@@ -33,12 +33,14 @@
 
 <script>
 import axios from "axios";
+import FrontConf from '/src/Front.json'
 export default {
+
   name: "file-settings",
   methods: {
     deleteAll()
     {
-      return axios.delete('https://geekbrains.sosus.org/v1/lectures/')
+      return axios.delete(`${FrontConf.domain}v1/lectures/`)
     }
   },
 }
