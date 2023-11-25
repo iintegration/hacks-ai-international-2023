@@ -46,6 +46,7 @@ class GetLectureResult(NoPydanticValidation):
     error: str | None
     timestamps: str | None
     terms: list[GetLectureResultTermsItem]
+    summary: str | None
 
 
 @dataclasses.dataclass
@@ -163,7 +164,8 @@ async def get_lecture(
             text := .text,
             error := .error,
             timestamps := .timestamps,
-            terms := .terms { term, definition, start_timestamp, end_timestamp }
+            terms := .terms { term, definition, start_timestamp, end_timestamp },
+            summary := .summary
         }
         filter .id = <uuid>$id
         limit 1\

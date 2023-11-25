@@ -53,6 +53,7 @@ module default {
             annotation description := 'Полный текст лекции';
         }
         timestamps: json;
+        summary: str;
         multi link terms: Term;
         error: str {
             annotation description := 'Ошибка, которая возникла во время обработки моделями';

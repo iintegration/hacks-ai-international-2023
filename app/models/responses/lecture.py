@@ -14,4 +14,5 @@ class Lecture(BaseModel):
     timestamps: list[dict[str, Any]] | None
     error: str | None
     download_link: str | None
-    terms: list[Term]
+    terms: list[Term] | None
+    summary: str | None
