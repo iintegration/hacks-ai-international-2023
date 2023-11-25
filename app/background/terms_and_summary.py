@@ -10,8 +10,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 from llama_cpp import Llama
 
-from app.background import first_model
-
 EMBEDDER_ID = "ai-forever/sbert_large_nlu_ru"
 SYSTEM_PROMPT = "Ты — Сайга, русскоязычный автоматический ассистент. Ты разговариваешь c людьми и помогаешь им."
 SYSTEM_TOKEN = 1587
@@ -152,7 +150,7 @@ class Result(TypedDict):
     end: float
 
 
-def process(full_text: first_model.Result) -> list[Result]:
+def process(full_text: first_model.Result) -> tuple[list[Result], str]:
     model_s = Llama(model_path=model_path, n_ctx=n_ctx, n_gpu_layers=-1)
 
     db = build_index_time(full_text, 10, 5)
@@ -204,4 +202,60 @@ def process(full_text: first_model.Result) -> list[Result]:
 
         terms_dict_list.append(terms_dict)
 
-    return terms_dict_list
+    questions = [
+        "какое название темы",
+        "причина изучать этот курс для студента",
+        "какую пользу принесёт данный курс для студента",
+        "на что влияет знание этой темы",
+        "каких ошибок студент избежит освоив эту тему",
+        "почему без данной темы нельзя двигаться дальше в профессии",
+        "план данной лекции",
+    ]
+
+    introduction = ""
+    for q in questions:
+        retrieve_text = retrieve(q, db, 4)
+        q_prompt = f"""
+    Используй текст лекции ответь на вопрос:
+    {q}?
+
+    Текст лекции:
+    {retrieve_text}
+        """
+        with torch.no_grad():
+            output = chat_saiga(q_prompt, model_s)
+            if output.find("bot") != -1:
+                output = output[: output.find("bot")]
+
+            introduction += output.replace("Выход:", "") + "\n\n"
+
+    for document_id in db.get()["ids"]:
+        db._collection.delete(ids=document_id)
+    db.persist()
+
+    db = build_index_big(full_text["text"], 2000, 30)
+
+    batch_summ = []
+    for batch in db.get()["documents"]:
+        summ_prompt = f"""
+        Напиши краткое изложение для введенного текста. Выводи в формате Краткое изложение: {{изложение}}
+
+
+        Текст:
+        {batch}
+        """
+
+        with torch.no_grad():
+            output = chat_saiga(summ_prompt, model_s).replace("\n", "")
+            if output.find(":") != -1:
+                output = output[output.find(":") + 2 :] + "\n"
+        batch_summ.append(output)
+    batch_summ = " ".join(batch_summ)
+
+    for document_id in db.get()["ids"]:
+        db._collection.delete(ids=document_id)
+    db.persist()
+
+    summary = introduction + "\n" + "Основной контент:" + "\n" + batch_summ
+
+    return terms_dict_list, summary

@@ -6,7 +6,7 @@ from uuid import UUID
 from arq.connections import RedisSettings
 from loguru import logger
 
-from app.background import first_model, second_model
+from app.background import terms_and_summary, transcriber
 from app.deps import edgedb, minio
 from app.queries import finish_analysis, get_lecture
 from app.settings import SETTINGS
@@ -46,14 +46,15 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             file_path=path,
         )
         context_logger.info("First model processing")
-        first_result = first_model.process(path=path)
+        first_result = transcriber.process(path=path)
         context_logger.info("First model processing complete")
-        context_logger.info(first_result)
+        context_logger.debug(first_result)
 
         context_logger.info("Second model processing")
-        second_result = second_model.process(full_text=first_result)
+        terms, summary = terms_and_summary.process(full_text=first_result)
         context_logger.info("Second model processing complete")
-        context_logger.info(second_result)
+        context_logger.debug(terms)
+        context_logger.debug(summary)
 
         await finish_analysis(
             edgedb.client,
@@ -62,8 +63,8 @@ async def analyze(_ctx: dict[str, Any], lecture_id: UUID) -> None:
             text=first_result["text"],
             error=None,
             timestamps=json.dumps(first_result["chunks"]),
-            terms=json.dumps(second_result),
-            summary=None,
+            terms=json.dumps(terms),
+            summary=summary,
         )
     except Exception as error:
         context_logger.exception("Error")

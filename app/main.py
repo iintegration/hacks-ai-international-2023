@@ -1,10 +1,7 @@
-import json
-
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from app.deps import arq, edgedb
-from app.queries import finish_analysis
 from app.routers.v1.router import router as v1_router
 
 app = FastAPI()
