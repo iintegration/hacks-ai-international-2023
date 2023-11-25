@@ -15,10 +15,11 @@ from app.models.responses.lecture import Lecture
 from app.models.responses.preview_lecture import PreviewLecture
 from app.queries import (
     create_lecture,
+    delete_lecture,
     delete_lectures,
     get_lecture,
     get_lectures,
-    set_lecture_status, delete_lecture,
+    set_lecture_status,
 )
 from app.settings import SETTINGS
 
