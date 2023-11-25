@@ -18,7 +18,7 @@ from app.queries import (
     delete_lectures,
     get_lecture,
     get_lectures,
-    set_lecture_status,
+    set_lecture_status, delete_lecture,
 )
 from app.settings import SETTINGS
 
@@ -102,6 +102,11 @@ async def lecture_info(lecture_id: UUID) -> Lecture:
         download_link = None
 
     return Lecture(download_link=download_link, **result)
+
+
+@router.delete("/{lecture_id}/")
+async def delete(lecture_id: UUID) -> None:
+    await delete_lecture(edgedb.client, lecture_id=lecture_id)
 
 
 @router.delete("/")

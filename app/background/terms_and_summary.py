@@ -214,8 +214,6 @@ def process(full_text: transcriber.Result) -> tuple[list[Result], str]:
         "план данной лекции",
     ]
 
-    print("AAASDFSDFSDF", db.get())
-
     introduction = ""
     for q in questions:
         retrieve_text = retrieve(q, db, 4)
